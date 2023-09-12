@@ -310,7 +310,8 @@
     },
     "upload_options": {
       "description": "Code.",
-      "icon": "X"
+      "icon": "pizza",
+      "slot": 2
     }
   }
 }

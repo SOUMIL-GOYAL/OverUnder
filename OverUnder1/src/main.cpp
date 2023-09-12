@@ -78,13 +78,14 @@ void autonomous() {}
 void opcontrol() {
 	Drive base(1,2,3,-18,-19,-20);
 
+	base.allcoast();
+
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor left_mtr(1);
-	pros::Motor right_mtr(2);
 
 	while (true) {
-		base.setleft(master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X));
-		base.setleft(master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X));
+		pros::lcd::set_text(3, "v2");
+		base.setleft(master.get_analog(ANALOG_RIGHT_Y) - master.get_analog(ANALOG_LEFT_X));
+		base.setright(master.get_analog(ANALOG_RIGHT_Y) - master.get_analog(ANALOG_LEFT_X));
 
 		
 		pros::delay(20);

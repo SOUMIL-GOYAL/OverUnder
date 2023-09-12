@@ -3,17 +3,20 @@
 #ifndef DRIVE_HPP
 #define DRIVE_HPP
 
-class Drive
+class Drive //representing a 6-motor drivetrain
 {
 private:
-    // int lbp, lmp, lfp, rbp, rmp, rfp;
     pros::Motor leftback, leftmiddle, leftfront, rightback, rightmiddle, rightfront;
+    pros::motor_gearset_e ratio = pros::E_MOTOR_GEARSET_06; //6:1 gear-ratio (blue cartridge)
+    //okapi::ChassisControllerIntegrated odomoetry;
+
+
 public:
-    Drive::Drive (int lb, int lm, int lf, int rb, int rm, int rf):leftback(lb, pros::E_MOTOR_GEARSET_06), leftmiddle(lm, pros::E_MOTOR_GEARSET_06), leftfront(lf, pros::E_MOTOR_GEARSET_06), rightback(rb, pros::E_MOTOR_GEARSET_06), rightmiddle(rm, pros::E_MOTOR_GEARSET_06), rightfront(rf, pros::E_MOTOR_GEARSET_06)  {}
-    void setleft (int velocity) {}
-    void setright (int velocity) {}
-    void allcoast () {}
-    void allbrake () {}
+    Drive::Drive (int lb, int lm, int lf, int rb, int rm, int rf):leftback(lb, ratio), leftmiddle(lm, ratio), leftfront(lf, ratio), rightback(rb, ratio), rightmiddle(rm, ratio), rightfront(rf, ratio)  {}
+    void setleft (int velocity) {} //set the left-side of the drivebase at a certain RPM
+    void setright (int velocity) {} //set the right-side of the drivebase at a certain RPM
+    void allcoast () {} //set all 6 motors in the drivebase to 'coast'
+    void allbrake () {} //set all 6 motors in thedrivebase to 'hold'
 
 };
 
