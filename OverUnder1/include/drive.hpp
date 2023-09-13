@@ -12,11 +12,11 @@ private:
 
 
 public:
-    Drive::Drive (int lb, int lm, int lf, int rb, int rm, int rf):leftback(lb, ratio), leftmiddle(lm, ratio), leftfront(lf, ratio), rightback(rb, ratio), rightmiddle(rm, ratio), rightfront(rf, ratio)  {}
-    void setleft (int velocity) {} //set the left-side of the drivebase at a certain RPM
-    void setright (int velocity) {} //set the right-side of the drivebase at a certain RPM
-    void allcoast () {} //set all 6 motors in the drivebase to 'coast'
-    void allbrake () {} //set all 6 motors in thedrivebase to 'hold'
+    Drive (int lb, int lm, int lf, int rb, int rm, int rf);
+    void setleft (int velocity);//set the left-side of the drivebase at a certain RPM
+    void setright (int velocity); //set the right-side of the drivebase at a certain RPM
+    void allcoast (); //set all 6 motors in the drivebase to 'coast'
+    void allbrake (); //set all 6 motors in thedrivebase to 'hold'
 
 };
 

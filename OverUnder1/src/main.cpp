@@ -76,16 +76,19 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	Drive base(1,2,3,-18,-19,-20);
+	Drive base(-1,-2,-3,18,19,20);
 
 	base.allcoast();
 
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
 
 	while (true) {
-		pros::lcd::set_text(3, "v2");
-		base.setleft(master.get_analog(ANALOG_RIGHT_Y) - master.get_analog(ANALOG_LEFT_X));
-		base.setright(master.get_analog(ANALOG_RIGHT_Y) - master.get_analog(ANALOG_LEFT_X));
+		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
+		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
+		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
+		pros::lcd::set_text(3, "working drive");
+		base.setleft(-master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X));
+		base.setright(-master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X));
 
 		
 		pros::delay(20);
