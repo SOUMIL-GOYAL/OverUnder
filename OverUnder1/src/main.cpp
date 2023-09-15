@@ -1,6 +1,7 @@
 #include "main.h"
 
 #include "drive.hpp"
+#include "intake.hpp"
 
 /**
  * A callback function for LLEMU's center button.
@@ -76,7 +77,8 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	Drive base(-1,-2,-3,18,19,20);
+	Drive base(-13,-2,-3,17,19,20);
+	Intake intake(5);
 
 	base.allcoast();
 
@@ -87,8 +89,16 @@ void opcontrol() {
 		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
 		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
 		pros::lcd::set_text(3, "working drive");
-		base.setleft(-master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X));
-		base.setright(-master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X));
+		base.setleft((master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X))*6);
+		base.setright((master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X))*6);
+
+		if (master.get_digital(DIGITAL_L1)) {
+			intake.inmax();
+		} else if (master.get_digital(DIGITAL_L2)) {
+			intake.outmax();
+		} else if (master.get_digital(DIGITAL_X)) {
+			intake.off();
+		}
 
 		
 		pros::delay(20);
