@@ -8,12 +8,21 @@
             pros::Motor motor;
             pros::motor_gearset_e ratio = pros::E_MOTOR_GEARSET_06; //6:1 gear-ratio (blue cartridge)
             pros::Rotation sensor;
-            bool shot = false;
+            bool requestshot = false;
+            bool requestreload = true;
+            int top;
+            int bottom;
+            bool ready;
+            int amount = 300;
+            int shootangle;
         public:
-            Catapult (int motorport, int sensorport);
+            Catapult (int motorport, int sensorport, int top_angle, int bottom_angle, int shoot_angle);
             void launch ();
             void reload ();
-            void getangle();
+            int getangle();
+            bool isready();
+            void taskmanager ();
+
             
     };
 #endif

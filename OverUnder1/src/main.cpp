@@ -2,6 +2,7 @@
 
 #include "drive.hpp"
 #include "intake.hpp"
+#include "catapult.hpp"
 
 /**
  * A callback function for LLEMU's center button.
@@ -77,8 +78,10 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	Drive base(-13,-2,-3,17,19,20);
-	Intake intake(5);
+	Drive base(-10,-4,-3,17,19,20);
+	Intake intake(11);
+	Catapult catapult(5, 12, 8550, 18550, 19100);
+
 
 	base.allcoast();
 
@@ -89,6 +92,7 @@ void opcontrol() {
 		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
 		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
 		pros::lcd::set_text(3, "working drive");
+		pros::lcd::set_text(4, catapult.getangle() + "");
 		base.setleft((master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X))*6);
 		base.setright((master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X))*6);
 
@@ -100,7 +104,18 @@ void opcontrol() {
 			intake.off();
 		}
 
+		if (master.get_digital(DIGITAL_R1)){
+			catapult.launch();
+		} else {
+			catapult.reload();
+		}
+
+		
+
+		catapult.taskmanager();
+
 		
 		pros::delay(20);
 	}
 }
+   

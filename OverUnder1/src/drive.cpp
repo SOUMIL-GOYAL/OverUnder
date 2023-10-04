@@ -8,6 +8,19 @@ Drive::Drive (int lb, int lm, int lf, int rb, int rm, int rf): leftback(lb, pros
     // rightback = rb;
     // rightmiddle = rm;
     // rightfront = rf;
+    using namespace okapi;
+
+    std::shared_ptr<okapi::OdomChassisController> odometry = okapi::ChassisControllerBuilder()
+    .withMotors(lb, rb) // left motor is 1, right motor is 2 (reversed)
+    .withGains(
+        {0.001, 0, 0.0001}, // Distance controller gains
+        {0.001, 0, 0.0001}, // Turn controller gains
+        {0.001, 0, 0.0001}  // Angle controller gains (helps drive straight)
+    )
+    // green gearset, 4 inch wheel diameter, 11.5 inch wheel track
+    .withDimensions(okapi::AbstractMotor::gearset::blue, {{4_in, 11.5_in}, okapi::imev5BlueTPR})
+    .withOdometry() // use the same scales as the chassis (above)
+    .buildOdometry(); // build an odometry chassis
 }
 
 void Drive::setleft (int velocity) {

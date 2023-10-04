@@ -9,6 +9,7 @@ private:
     pros::Motor leftback, leftmiddle, leftfront, rightback, rightmiddle, rightfront;
     pros::motor_gearset_e ratio = pros::E_MOTOR_GEARSET_06; //6:1 gear-ratio (blue cartridge)
     //okapi::ChassisControllerIntegrated odomoetry;
+    //okapi::ChassisControllerPID odometry;
 
 
 public:
@@ -17,6 +18,10 @@ public:
     void setright (int velocity); //set the right-side of the drivebase at a certain RPM
     void allcoast (); //set all 6 motors in the drivebase to 'coast'
     void allbrake (); //set all 6 motors in thedrivebase to 'hold'
+    int getx () {
+        
+
+    }
 
 };
 
