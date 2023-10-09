@@ -1,29 +1,40 @@
 #include "catapult.hpp"
 #include "main.h"
 
-Catapult::Catapult (int motorport, int sensorport, int top_angle, int bottom_angle, int shoot_angle):motor(motorport, ratio), sensor(sensorport){
+Catapult::Catapult (int motorport, int sensorport, int top_angle, int bottom_angle):motor(motorport, ratio), sensor(sensorport){
     top = top_angle;
     bottom = bottom_angle;
     requestshot = false;
-    shootangle = shoot_angle;
+
+    kp = .04;
+    ka = 1;
     
 }
 
 void Catapult::taskmanager () {
-    Catapult::motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     isready();
-    if (Catapult::requestshot == true) {
-            // if (Catapult::isready()) { //is the reload finished?
-                if (Catapult::getangle() >= Catapult::top) {
-                    Catapult::motor.move_velocity(-300);
+    if (rapidfireon == true) {
+        motor.move_velocity(-600);
+    } else if (requestshot == true) {
+                if (getangle() >= top) {
+                    motor.move_velocity(-300);
                 } else {
-                    Catapult::requestshot = false;
-                    Catapult::reload();
+                    requestshot = false;
+                    reload();
                 }
-            // }
-    } else if (Catapult::requestreload == true) {
-        if (Catapult::getangle() < Catapult::bottom){
-            Catapult::motor.move_velocity(-300);
+    } else if (requestreload == true) {
+        if (getangle() < bottom){
+            int error = bottom - getangle();
+
+            if (error <= tolerance && error >= -tolerance) {
+
+            } else {
+                double result = kp * error;
+                motor.move_velocity(-result);
+                previousresult = result;
+
+            }
         } else {
             motor.move_velocity(0);
         }
@@ -40,15 +51,24 @@ void Catapult::launch () {
 }
 
 void Catapult::reload () {
-    if (Catapult::requestshot == false) {
-            Catapult::requestreload = true;
+    if (requestshot == false) {
+        requestreload = true;
     }
 }
 
 bool Catapult::isready () {
-    if (Catapult::getangle() >= Catapult::bottom) {
+    if (getangle() >= bottom) {
         return true;
     } else {
         return false;
+    }
+}
+
+
+void Catapult::rapidfire () {
+    if (rapidfireon == false) {
+        rapidfireon = true;
+    } else if (rapidfireon == true) {
+        rapidfireon = false;
     }
 }

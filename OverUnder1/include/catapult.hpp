@@ -6,23 +6,28 @@
     class Catapult {
         private:
             pros::Motor motor;
-            pros::motor_gearset_e ratio = pros::E_MOTOR_GEARSET_06; //6:1 gear-ratio (blue cartridge)
+            pros::motor_gearset_e ratio = pros::E_MOTOR_GEARSET_18; //18:1 gear-ratio (green cartridge)
             pros::Rotation sensor;
             bool requestshot = false;
             bool requestreload = true;
+            bool rapidfireon = false;
             int top;
             int bottom;
-            bool ready;
             int amount = 300;
-            int shootangle;
+            int tolerance = 500;
+            double kp;
+            double ka;
+            double previousresult = 0;
         public:
-            Catapult (int motorport, int sensorport, int top_angle, int bottom_angle, int shoot_angle);
+            Catapult (int motorport, int sensorport, int top_angle, int bottom_angle);
             void launch ();
             void reload ();
-            int getangle();
+            void rapidfire();
+            
             bool isready();
             void taskmanager ();
 
+            int getangle();
             
     };
 #endif

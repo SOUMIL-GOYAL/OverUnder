@@ -78,14 +78,14 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	Drive base(-10,-4,-3,17,19,20);
-	Intake intake(11);
-	Catapult catapult(5, 12, 8550, 18550, 19100);
+	Drive base(-9,-10,-8,2,3,4); //create a new Drive object
+	Intake intake(11); //create a new Intake object
+	Catapult catapult(5, 12, 9000, 18550); //create a new Catapult object
+	pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object
 
+	base.allcoast(); //since it's driver-control, let the motors not auto-brake
 
-	base.allcoast();
-
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
+	
 
 	while (true) {
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
@@ -93,6 +93,8 @@ void opcontrol() {
 		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
 		pros::lcd::set_text(3, "working drive");
 		pros::lcd::set_text(4, catapult.getangle() + "");
+
+
 		base.setleft((master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X))*6);
 		base.setright((master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X))*6);
 
@@ -109,9 +111,10 @@ void opcontrol() {
 		} else {
 			catapult.reload();
 		}
-
+		if (master.get_digital_new_press(DIGITAL_DOWN)) {
+			catapult.rapidfire();
+		}
 		
-
 		catapult.taskmanager();
 
 		
