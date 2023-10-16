@@ -6,7 +6,7 @@ Catapult::Catapult (int motorport, int sensorport, int top_angle, int bottom_ang
     bottom = bottom_angle;
     requestshot = false;
 
-    kp = .04;
+    kp = .03;
     ka = 1;
     
 }

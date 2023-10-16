@@ -1,7 +1,13 @@
 #include "drive.hpp"
 #include "main.h"
 
-Drive::Drive (int lb, int lm, int lf, int rb, int rm, int rf): leftback(lb, pros::E_MOTOR_GEARSET_06), leftmiddle(lm, pros::E_MOTOR_GEARSET_06), leftfront(lf, pros::E_MOTOR_GEARSET_06), rightback(rb, pros::E_MOTOR_GEARSET_06), rightmiddle(rm, pros::E_MOTOR_GEARSET_06), rightfront(rf, pros::E_MOTOR_GEARSET_06) {
+Drive::Drive (int lb, int lm, int lf, int rb, int rm, int rf)
+: leftback(lb, pros::E_MOTOR_GEARSET_06), 
+leftmiddle(lm, pros::E_MOTOR_GEARSET_06), 
+leftfront(lf, pros::E_MOTOR_GEARSET_06), 
+rightback(rb, pros::E_MOTOR_GEARSET_06), 
+rightmiddle(rm, pros::E_MOTOR_GEARSET_06), 
+rightfront(rf, pros::E_MOTOR_GEARSET_06) {
     // leftback = lb;
     // leftmiddle = lm;
     // leftfront = lf;
@@ -51,6 +57,10 @@ void Drive::allbrake () {
     rightback.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     rightmiddle.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     rightfront.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+}
+
+int Drive::getx () {
+    
 }
 
 

@@ -78,9 +78,9 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	Drive base(-9,-10,-8,2,3,4); //create a new Drive object
+	Drive base(-4,-13,-3,8,18,9); //create a new Drive object
 	Intake intake(11); //create a new Intake object
-	Catapult catapult(5, 12, 9000, 18550); //create a new Catapult object
+	Catapult catapult(5, 12, 9000, 19000); //create a new Catapult object
 	pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object
 
 	base.allcoast(); //since it's driver-control, let the motors not auto-brake
@@ -91,12 +91,24 @@ void opcontrol() {
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
 		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
 		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
-		pros::lcd::set_text(3, "working drive");
+		pros::lcd::set_text(3, "plz drive");
 		pros::lcd::set_text(4, catapult.getangle() + "");
 
 
-		base.setleft((master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X))*6);
-		base.setright((master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X))*6);
+
+		
+		double x = -1* (pow(1.0471285480509, -1 * master.get_analog(ANALOG_RIGHT_X))) + pow(1.0471285480509, master.get_analog(ANALOG_RIGHT_X));
+		int y = master.get_analog(ANALOG_LEFT_Y);
+
+		if (x <= 10 && x >= -10) {
+			x = 0;
+		}
+		if (y <= 10 && y >= -10) {
+			y = 0;
+		}
+
+		base.setleft((y+ x)*6);
+		base.setright((y - x)*6);
 
 		if (master.get_digital(DIGITAL_L1)) {
 			intake.inmax();
