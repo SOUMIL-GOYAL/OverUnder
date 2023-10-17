@@ -3,6 +3,7 @@
 #include "drive.hpp"
 #include "intake.hpp"
 #include "catapult.hpp"
+#include "pneumaticgroup.hpp"
 
 /**
  * A callback function for LLEMU's center button.
@@ -81,7 +82,8 @@ void opcontrol() {
 	Drive base(-4,-13,-3,8,18,9); //create a new Drive object
 	Intake intake(11); //create a new Intake object
 	Catapult catapult(5, 12, 9000, 19000); //create a new Catapult object
-	pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object
+	pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object (remote)
+	Pneumaticgroup flaps('A', false); //create a new pneumatic group for the flaps
 
 	base.allcoast(); //since it's driver-control, let the motors not auto-brake
 
@@ -91,25 +93,25 @@ void opcontrol() {
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
 		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
 		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
-		pros::lcd::set_text(3, "plz drive");
-		pros::lcd::set_text(4, catapult.getangle() + "");
 
-
+						 
+		pros::lcd::set_text(3, "plz drive"); //upload tester
 
 		
-		double x = -1* (pow(1.0471285480509, -1 * master.get_analog(ANALOG_RIGHT_X))) + pow(1.0471285480509, master.get_analog(ANALOG_RIGHT_X));
-		int y = master.get_analog(ANALOG_LEFT_Y);
+		double x = -1* (pow(1.0471285480509, -1 * master.get_analog(ANALOG_RIGHT_X))) + pow(1.0471285480509, master.get_analog(ANALOG_RIGHT_X)); //exponential function for turning tuning
+		int y = master.get_analog(ANALOG_LEFT_Y); //linear function for forwards/backwards movement
 
-		if (x <= 10 && x >= -10) {
+		if (x <= 10 && x >= -10) { //tolerance/deadband for turning
 			x = 0;
 		}
-		if (y <= 10 && y >= -10) {
+		if (y <= 10 && y >= -10) { //tolerance/deadband for moving
 			y = 0;
 		}
 
-		base.setleft((y+ x)*6);
-		base.setright((y - x)*6);
+		base.setleft((y+ x)*6); //multiply by 6 for RPM value and set wheel speeds
+		base.setright((y - x)*6); //multiply by 6 for RPM value and set wheel speeds
 
+		// Intake commands on L1, L2, and X
 		if (master.get_digital(DIGITAL_L1)) {
 			intake.inmax();
 		} else if (master.get_digital(DIGITAL_L2)) {
@@ -118,19 +120,26 @@ void opcontrol() {
 			intake.off();
 		}
 
+		// Catapult commands on R1 and Down
 		if (master.get_digital(DIGITAL_R1)){
-			catapult.launch();
+			catapult.launch(); //sets request for taskmanager
 		} else {
-			catapult.reload();
+			catapult.reload(); //sets request for taskmanager
 		}
 		if (master.get_digital_new_press(DIGITAL_DOWN)) {
-			catapult.rapidfire();
+			catapult.rapidfire(); //sets request for taskmanager
 		}
 		
-		catapult.taskmanager();
+		catapult.taskmanager(); //calling taskmanager on every cycle to handle catapult logic
 
+		// flaps only open during R2 pressed, then auto-close
+		if (master.get_digital(DIGITAL_R2)) {
+			flaps.openboth();
+		} else {
+			flaps.closeboth();
+		}
 		
-		pros::delay(20);
+		pros::delay(20); //20 msec before re-running the loop
 	}
 }
    

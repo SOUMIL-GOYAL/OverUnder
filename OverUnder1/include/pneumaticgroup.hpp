@@ -5,8 +5,13 @@
 
     class Pneumaticgroup {
         private:
-            // pros::E_ADI_DIGITAL_OUT cylinder1;
-            // pros::E_ADI_DIGITAL_OUT cylinder2;
+            pros::ADIDigitalOut solenoid;
+            bool status;
+
+        public:
+            Pneumaticgroup (char port, bool start);
+            void closeboth();
+            void openboth ();
 
     };
 
