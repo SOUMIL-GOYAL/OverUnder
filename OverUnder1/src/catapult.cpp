@@ -5,6 +5,7 @@ Catapult::Catapult (int motorport, int sensorport, int top_angle, int bottom_ang
     top = top_angle;
     bottom = bottom_angle;
     requestshot = false;
+    emergency = false;
 
     kp = .03;
     ka = 1;
@@ -12,17 +13,22 @@ Catapult::Catapult (int motorport, int sensorport, int top_angle, int bottom_ang
 }
 
 void Catapult::taskmanager () {
-    motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     isready();
-    if (rapidfireon == true) {
+    if (emergency == true) {
+        motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    } else if (rapidfireon == true) {
         motor.move_velocity(-600);
+        motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
     } else if (requestshot == true) {
-                if (getangle() >= top) {
-                    motor.move_velocity(-300);
-                } else {
-                    requestshot = false;
-                    reload();
-                }
+        if (getangle() >= top) {
+            motor.move_velocity(-300);
+        } else {
+            requestshot = false;
+            reload();
+        }
+        motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
     } else if (requestreload == true) {
         if (getangle() < bottom){
             int error = bottom - getangle();
@@ -35,8 +41,12 @@ void Catapult::taskmanager () {
                 previousresult = result;
 
             }
+            motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
         } else {
             motor.move_velocity(0);
+            motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
         }
     }
 }
@@ -71,4 +81,8 @@ void Catapult::rapidfire () {
     } else if (rapidfireon == true) {
         rapidfireon = false;
     }
+}
+
+void Catapult::requestemergency (bool value) {
+    emergency = value;
 }

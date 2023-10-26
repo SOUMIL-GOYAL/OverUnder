@@ -63,7 +63,22 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+	Drive base(-4,-13,-3,8,18,9); //create a new Drive object
+	Intake intake(11); //create a new Intake object
+	Catapult catapult(5, 12, 9000, 19000); //create a new Catapult object
+	pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object (remote)
+	Pneumaticgroup flaps('A', false); //create a new pneumatic group for the flaps
+	base.allbrake();
+
+	pros::lcd::set_text(3, "begin"); 
+	
+	
+	base.go(10);
+
+	//pros::lcd::set_text(3, "finished");
+
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -94,8 +109,10 @@ void opcontrol() {
 		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
 		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
 
-						 
-		pros::lcd::set_text(3, "plz drive"); //upload tester
+
+		pros::lcd::set_text(3, "emergency test"); //upload tester (change the string to see if the code is new)
+
+		pros::lcd::set_text(4, std::to_string(base.getangle())); //upload tester (change the string to see if the code is new)
 
 		
 		double x = -1* (pow(1.0471285480509, -1 * master.get_analog(ANALOG_RIGHT_X))) + pow(1.0471285480509, master.get_analog(ANALOG_RIGHT_X)); //exponential function for turning tuning
@@ -121,6 +138,13 @@ void opcontrol() {
 		}
 
 		// Catapult commands on R1 and Down
+		if (master.get_digital(DIGITAL_B)) {
+			catapult.requestemergency(true);
+			pros::lcd::set_text(3, "pig test"); //upload tester (change the string to see if the code is new)
+			
+		} else {
+			catapult.requestemergency(false);
+		}
 		if (master.get_digital(DIGITAL_R1)){
 			catapult.launch(); //sets request for taskmanager
 		} else {
@@ -142,4 +166,3 @@ void opcontrol() {
 		pros::delay(20); //20 msec before re-running the loop
 	}
 }
-   

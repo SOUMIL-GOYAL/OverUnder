@@ -11,6 +11,7 @@
             bool requestshot = false;
             bool requestreload = true;
             bool rapidfireon = false;
+            bool emergency = false;
             int top;
             int bottom;
             int amount = 300;
@@ -23,9 +24,12 @@
             void launch ();
             void reload ();
             void rapidfire();
+            void requestemergency(bool value);
+
             
             bool isready();
             void taskmanager ();
+            
 
             int getangle();
             
