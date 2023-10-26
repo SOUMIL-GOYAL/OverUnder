@@ -60,7 +60,9 @@ void Drive::allbrake () {
 }
 
 double Drive::getangle () {
-    return (fmod((leftback.get_position()-rightback.get_position())/(11.569), 360));
+    double L = (leftback.get_position() / 360) * 4 * 3.1415926535;
+    double R = (rightback.get_position() / 360) * 4 * 3.1415926535;
+    return (fmod((L-R)/8.6, 2 * 3.1415926535));
 
 }
 

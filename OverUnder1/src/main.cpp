@@ -141,7 +141,6 @@ void opcontrol() {
 		if (master.get_digital(DIGITAL_B)) {
 			catapult.requestemergency(true);
 			pros::lcd::set_text(3, "pig test"); //upload tester (change the string to see if the code is new)
-			
 		} else {
 			catapult.requestemergency(false);
 		}

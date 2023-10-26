@@ -13,9 +13,10 @@ Catapult::Catapult (int motorport, int sensorport, int top_angle, int bottom_ang
 }
 
 void Catapult::taskmanager () {
-    isready();
     if (emergency == true) {
+        motor.move_velocity(0);
         motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+        return;
     } else if (rapidfireon == true) {
         motor.move_velocity(-600);
         motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -65,15 +66,6 @@ void Catapult::reload () {
         requestreload = true;
     }
 }
-
-bool Catapult::isready () {
-    if (getangle() >= bottom) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
 
 void Catapult::rapidfire () {
     if (rapidfireon == false) {
