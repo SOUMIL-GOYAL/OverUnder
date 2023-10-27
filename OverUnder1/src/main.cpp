@@ -71,10 +71,14 @@ void autonomous() {
 	Pneumaticgroup flaps('A', false); //create a new pneumatic group for the flaps
 	base.allbrake();
 
-	pros::lcd::set_text(3, "begin"); 
+	pros::lcd::set_text(3, "test begin"); 
 	
 	
-	base.go(10);
+	base.go(24);
+	base.go(-24);
+
+	pros::lcd::set_text(3, "test end"); 
+
 
 	//pros::lcd::set_text(3, "finished");
 

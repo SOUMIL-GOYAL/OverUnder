@@ -14,8 +14,6 @@ private:
     double DL;
     double DR;
 
-    double previous;
-
     double kp, ki, ka;
 
 

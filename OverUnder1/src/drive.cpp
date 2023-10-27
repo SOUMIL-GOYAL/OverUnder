@@ -26,7 +26,15 @@ rightfront(rf, pros::E_MOTOR_GEARSET_06) {
     double DL = 7;
     double DR = 7;
 
-    double kp = 1, ki = 0, ka = 1;
+    kp = .3;
+    ki = 0;
+    ka = 5;
+
+    leftback.tare_position();
+    rightback.tare_position();
+
+
+    
 }
 
 void Drive::setleft (int velocity) {
@@ -67,26 +75,35 @@ double Drive::getangle () {
 }
 
 void Drive::go (double inches) {
-    double previousresult = leftback.get_position();
+    double starting = leftback.get_position();
+    double previousresult = 0;
     while (true) {
-        double currentposition = leftback.get_position() - previous;
-        double error = inches*(3.7699) - currentposition;
+        double error = (inches/3.7699)*180 - leftback.get_position() + starting;
 
         double result = error * kp;
 
-        // if ((previousresult - result) <= ka && (previousresult - result) >= -ka) {
-        //     result = previousresult + ka;
-        // }
+        if ((previousresult - result) <= -ka) {
+            result = previousresult + ka;
+        } else if ((previousresult - result) >= ka) {
+            result = previousresult - ka;
+        }
         
-        setright(result * 600);
-        setleft(result * 600);
+        setright(int(result));
+        setleft(int(result));
 
 
-        previous = leftback.get_position();  
 
-        // if (error <= 360 && error >= -360) {
-        //     break;
-        // }
+        if (error <= 20 && error >= -20) {
+            setleft(0);
+            setright(0);
+            break;
+        }
+
+        previousresult = result;
+
+        pros::lcd::set_text(4, std::to_string(result));
+
+        pros::delay(20);
     }
     
 }
