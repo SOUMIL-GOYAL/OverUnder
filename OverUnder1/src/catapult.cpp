@@ -78,3 +78,16 @@ void Catapult::rapidfire () {
 void Catapult::requestemergency (bool value) {
     emergency = value;
 }
+
+void Catapult::autofire(int seconds) {
+    int counter = 0;
+    while (true) {
+        motor.move_velocity(-600);
+        counter++;
+        if (counter / 10 >= seconds) {
+            motor.move_velocity(0);
+            break;
+        }
+        pros::delay(100);
+    }
+}

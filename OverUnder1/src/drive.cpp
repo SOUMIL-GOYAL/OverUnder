@@ -1,13 +1,14 @@
 #include "drive.hpp"
 #include "main.h"
 
-Drive::Drive (int lb, int lm, int lf, int rb, int rm, int rf)
+Drive::Drive (int lb, int lm, int lf, int rb, int rm, int rf, int inertialport)
 : leftback(lb, pros::E_MOTOR_GEARSET_06), 
 leftmiddle(lm, pros::E_MOTOR_GEARSET_06), 
 leftfront(lf, pros::E_MOTOR_GEARSET_06), 
 rightback(rb, pros::E_MOTOR_GEARSET_06), 
 rightmiddle(rm, pros::E_MOTOR_GEARSET_06), 
-rightfront(rf, pros::E_MOTOR_GEARSET_06) {
+rightfront(rf, pros::E_MOTOR_GEARSET_06),
+inertia(inertialport) {
 
     // using namespace okapi;
 
@@ -26,15 +27,13 @@ rightfront(rf, pros::E_MOTOR_GEARSET_06) {
     double DL = 7;
     double DR = 7;
 
-    kp = .3;
+    kp = .5;
     ki = 0;
     ka = 5;
 
     leftback.tare_position();
     rightback.tare_position();
-
-
-    
+  
 }
 
 void Drive::setleft (int velocity) {
@@ -67,11 +66,30 @@ void Drive::allbrake () {
     rightfront.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 }
 
-double Drive::getangle () {
-    double L = (leftback.get_position() / 360) * 4 * 3.1415926535;
-    double R = (rightback.get_position() / 360) * 4 * 3.1415926535;
-    return (fmod((L-R)/8.6, 2 * 3.1415926535));
+void Drive::turnto (double goal) {
+    // double L = (leftback.get_position() / 360) * 4 * 3.1415926535;
+    // double R = (rightback.get_position() / 360) * 4 * 3.1415926535;
+    // return (fmod((L-R)/8.6, 2 * 3.1415926535));
+    double kP = .4;
+    double kI = .0000;//4
+    double error = 0;
+    double result;
+    double totalerror = 0;
 
+    while (true) {
+    error = fmod((goal - ((lround(fmod(inertia.get_rotation(),360)) + 540) % 360 - 180) + 540), 360) - 180;
+    totalerror += error;
+    if (fabs(error) <= 2) {
+        setleft(0);
+        setright(0);
+        allbrake();
+        break;
+    }
+    result = (error * kP) + (totalerror * kI);
+    setleft(result*6);
+    setright(-result*6);
+    pros::delay(20);
+    }
 }
 
 void Drive::go (double inches) {
@@ -107,6 +125,18 @@ void Drive::go (double inches) {
     }
     
 }
+
+
+void Drive::gotime (double secs) {
+    setright(400);
+    setleft(400);
+    pros::delay(secs * 1000);
+    setleft(0);
+    setright(0);
+}
+
+
+
 
 
 

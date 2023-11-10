@@ -64,18 +64,37 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	Drive base(-4,-13,-3,8,18,9); //create a new Drive object
+	Drive base(-4,-13,-19,8,18,9, 18); //create a new Drive object
 	Intake intake(11); //create a new Intake object
 	Catapult catapult(5, 12, 9000, 19000); //create a new Catapult object
 	pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object (remote)
 	Pneumaticgroup flaps('A', false); //create a new pneumatic group for the flaps
+
+	pros::ADIAnalogIn selector('B');
+
 	base.allbrake();
 
-	pros::lcd::set_text(3, "test begin"); 
+	pros::lcd::set_text(3, "test begin");
+
+
+	if (selector.get_value() >= 2000) {//match
+		base.go(-58.91);
+		base.go(4);
+		base.go(-6);
+		base.go(52);
+		base.turnto(47);
+		base.go(20);
+	} else {//skills
+		catapult.autofire(60);
+
+
+	}
 	
 	
-	base.go(24);
-	base.go(-24);
+	
+
+
+
 
 	pros::lcd::set_text(3, "test end"); 
 
@@ -98,7 +117,7 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	Drive base(-4,-13,-3,8,18,9); //create a new Drive object
+	Drive base(-4,-13,-3,8,18,9, 18); //create a new Drive object
 	Intake intake(11); //create a new Intake object
 	Catapult catapult(5, 12, 9000, 19000); //create a new Catapult object
 	pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object (remote)
@@ -116,7 +135,6 @@ void opcontrol() {
 
 		pros::lcd::set_text(3, "emergency test"); //upload tester (change the string to see if the code is new)
 
-		pros::lcd::set_text(4, std::to_string(base.getangle())); //upload tester (change the string to see if the code is new)
 
 		
 		double x = -1* (pow(1.0471285480509, -1 * master.get_analog(ANALOG_RIGHT_X))) + pow(1.0471285480509, master.get_analog(ANALOG_RIGHT_X)); //exponential function for turning tuning

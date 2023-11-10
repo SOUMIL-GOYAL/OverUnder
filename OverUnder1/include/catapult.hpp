@@ -32,6 +32,8 @@
             
 
             int getangle();
+
+            void autofire(int seconds);
             
     };
 #endif
