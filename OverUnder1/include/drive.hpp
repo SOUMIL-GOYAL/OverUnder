@@ -31,7 +31,7 @@ public:
     int getx ();
 
     void go(double inches);
-    void gotime(double secs);
+    void gotime(double secs, bool direction);
 
 };
 

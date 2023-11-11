@@ -64,7 +64,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	Drive base(-4,-13,-19,8,18,9, 18); //create a new Drive object
+	Drive base(-4,-13,-19,8,18,9, 17); //create a new Drive object
 	Intake intake(11); //create a new Intake object
 	Catapult catapult(5, 12, 9000, 19000); //create a new Catapult object
 	pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object (remote)
@@ -77,13 +77,17 @@ void autonomous() {
 	pros::lcd::set_text(3, "test begin");
 
 
-	if (selector.get_value() >= 2000) {//match
-		base.go(-58.91);
-		base.go(4);
-		base.go(-6);
-		base.go(52);
-		base.turnto(47);
+	if (selector.get_value() >= 2000) {//opposing side (offensive)
+		base.gotime(2, false);
+
+		base.go(5);
+
+		base.turnto(0);
 		base.go(20);
+		base.turnto(47);
+		base.go(30);
+
+
 	} else {//skills
 		catapult.autofire(60);
 
@@ -117,7 +121,7 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	Drive base(-4,-13,-3,8,18,9, 18); //create a new Drive object
+	Drive base(-4,-13,-3,8,18,9, 17); //create a new Drive object
 	Intake intake(11); //create a new Intake object
 	Catapult catapult(5, 12, 9000, 19000); //create a new Catapult object
 	pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object (remote)
