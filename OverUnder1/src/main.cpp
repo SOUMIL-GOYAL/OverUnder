@@ -63,7 +63,17 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+
+
+
+
+Drive base(-4,-13,-19,8,14,9, 17); //create a new Drive object
+Intake intake(-11); //create a new Intake object
 Catapult catapult(5, 12, 9000, 19000); //create a new Catapult object
+pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object (remote)
+Pneumaticgroup flaps('A', false); //create a new pneumatic group for the flaps
+pros::ADIAnalogIn selector('B');
+Pneumaticgroup lifter('C', true);
 
 void cata () {
 	while (true) {
@@ -73,15 +83,7 @@ catapult.taskmanager();
 	
 }
 
-
 void autonomous() {
-	Drive base(-4,-13,-19,8,14,9, 17); //create a new Drive object
-	Intake intake(11); //create a new Intake object
-	pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object (remote)
-	Pneumaticgroup flaps('A', false); //create a new pneumatic group for the flaps
-
-	pros::ADIAnalogIn selector('B');
-
 	base.allbrake();
 
 	
@@ -190,11 +192,8 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	Drive base(-4,-13,-19,8,14,9, 17); //create a new Drive object
-	Intake intake(11); //create a new Intake object
-	Catapult catapult(5, 12, 9000, 19000); //create a new Catapult object
-	pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object (remote)
-	Pneumaticgroup flaps('A', false); //create a new pneumatic group for the flaps
+	
+
 
 	base.allcoast(); //since it's driver-control, let the motors not auto-brake
 
@@ -255,6 +254,11 @@ void opcontrol() {
 			flaps.openboth();
 		} else {
 			flaps.closeboth();
+		}
+
+
+		if (master.get_digital_new_press(DIGITAL_UP)) {
+			lifter.toggle();
 		}
 		
 		pros::delay(20); //20 msec before re-running the loop

@@ -13,6 +13,8 @@
             void closeboth();
             void openboth ();
 
+            void toggle();
+
     };
 
 

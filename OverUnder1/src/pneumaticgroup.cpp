@@ -18,3 +18,13 @@ void Pneumaticgroup::closeboth () {
         status = false;
     }
 }
+
+void Pneumaticgroup::toggle () {
+    if (status == true) {
+        solenoid.set_value(false);
+        status = false;
+    } else if (status == false) {
+        solenoid.set_value(true);
+        status = true;
+    }
+}
