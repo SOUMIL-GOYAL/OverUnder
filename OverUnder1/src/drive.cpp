@@ -123,34 +123,19 @@ void Drive::go (double inches) {
 
         pros::delay(20);
     }
-    
 }
 
 
 void Drive::gotime (double secs, bool direction) {
     if (direction) {
-        setright(400);
-        setleft(400);
+        setright(500);
+        setleft(500);
     } else {
-        setright(-400);
-        setleft(-400);
+        setright(-500);
+        setleft(-500);
     }
     
     pros::delay(secs * 1000);
     setleft(0);
     setright(0);
-
-    allcoast();
 }
-
-
-
-
-
-
-
-int Drive::getx () {
-
-}
-
-

@@ -27,12 +27,9 @@ public:
 
 
     void turnto(double goal);
-    void updateodometry();
-    int getx ();
 
     void go(double inches);
     void gotime(double secs, bool direction);
-
 };
 
 

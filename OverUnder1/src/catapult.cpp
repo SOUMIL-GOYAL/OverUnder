@@ -6,7 +6,8 @@ Catapult::Catapult (int motorport, int sensorport, int top_angle, int bottom_ang
     bottom = bottom_angle;
     requestshot = false;
     emergency = false;
-
+    
+    tolerance = 500;
     kp = .03;
     ka = 1;
     
@@ -35,12 +36,13 @@ void Catapult::taskmanager () {
             int error = bottom - getangle();
 
             if (error <= tolerance && error >= -tolerance) {
+                requestreload = false;
+                motor.move_velocity(0);
+            motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
             } else {
                 double result = kp * error;
                 motor.move_velocity(-result);
-                previousresult = result;
-
             }
             motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
@@ -65,6 +67,8 @@ void Catapult::reload () {
     if (requestshot == false) {
         requestreload = true;
     }
+            rapidfireon = false;
+
 }
 
 void Catapult::rapidfire () {

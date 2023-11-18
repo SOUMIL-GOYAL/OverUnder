@@ -14,11 +14,9 @@
             bool emergency = false;
             int top;
             int bottom;
-            int amount = 300;
-            int tolerance = 500;
+            int tolerance;
             double kp;
             double ka;
-            double previousresult = 0;
         public:
             Catapult (int motorport, int sensorport, int top_angle, int bottom_angle);
             void launch ();
@@ -26,8 +24,6 @@
             void rapidfire();
             void requestemergency(bool value);
 
-            
-            bool isready();
             void taskmanager ();
             
 

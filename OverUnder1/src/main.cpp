@@ -63,10 +63,20 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+Catapult catapult(5, 12, 9000, 19000); //create a new Catapult object
+
+void cata () {
+	while (true) {
+catapult.taskmanager();
+	pros::delay(30);
+	}
+	
+}
+
+
 void autonomous() {
-	Drive base(-4,-13,-19,8,18,9, 17); //create a new Drive object
+	Drive base(-4,-13,-19,8,14,9, 17); //create a new Drive object
 	Intake intake(11); //create a new Intake object
-	Catapult catapult(5, 12, 9000, 19000); //create a new Catapult object
 	pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object (remote)
 	Pneumaticgroup flaps('A', false); //create a new pneumatic group for the flaps
 
@@ -74,22 +84,81 @@ void autonomous() {
 
 	base.allbrake();
 
-	pros::lcd::set_text(3, "test begin");
+	
 
 
-	if (selector.get_value() >= 2000) {//opposing side (offensive)
+	if (selector.get_value() >= 2800 && selector.get_value() <= 3310) {//opposing side (offensive)
+
+		pros::lcd::set_text(3, "offense");
 		base.gotime(2, false);
 
 		base.go(5);
 
 		base.turnto(0);
-		base.go(20);
-		base.turnto(47);
-		base.go(30);
+		base.go(26);
+		base.turnto(49);//47
+
+		base.go(32);
 
 
-	} else {//skills
-		catapult.autofire(60);
+
+	} else if (selector.get_value() >= 1500 && selector.get_value() <= 2100) {
+		pros::lcd::set_text(3, "WPWPWPW");
+
+
+		pros::Task my_task(cata);
+		flaps.openboth();
+		catapult.reload();
+
+		base.turnto(-70);
+
+		flaps.closeboth();
+
+		catapult.launch();
+		pros::delay(1000);
+
+		base.go(-5);
+
+		base.turnto(157);
+
+		base.go(29);
+
+		base.turnto(135);
+		base.go(15);
+		//last one
+
+
+
+
+		
+		
+	}else {//skills
+		pros::lcd::set_text(3, "new skills");
+
+		pros::Task my_task(cata);
+		catapult.rapidfire();
+		pros::delay(45000);
+		catapult.reload();
+
+		//catapult.autofire(5);
+
+		base.go(-3);
+
+		base.turnto(45);
+
+
+		base.gotime(5, false);
+		base.turnto(45);
+		base.gotime(.75, true);
+		base.turnto(45);
+
+		base.gotime(5, false);
+		base.turnto(45);
+
+		base.gotime(.75, true);
+
+
+
 
 
 	}
@@ -121,7 +190,7 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	Drive base(-4,-13,-3,8,18,9, 17); //create a new Drive object
+	Drive base(-4,-13,-19,8,14,9, 17); //create a new Drive object
 	Intake intake(11); //create a new Intake object
 	Catapult catapult(5, 12, 9000, 19000); //create a new Catapult object
 	pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object (remote)
@@ -168,15 +237,15 @@ void opcontrol() {
 			catapult.requestemergency(true);
 			pros::lcd::set_text(3, "pig test"); //upload tester (change the string to see if the code is new)
 		} else {
-			catapult.requestemergency(false);
+			catapult.requestemergency(false); //In case of hardware emergency, relieve motor
 		}
 		if (master.get_digital(DIGITAL_R1)){
-			catapult.launch(); //sets request for taskmanager
+			catapult.launch(); //sets a launching request for taskmanager
 		} else {
-			catapult.reload(); //sets request for taskmanager
+			catapult.reload(); //sets reload request (default) for taskmanager
 		}
 		if (master.get_digital_new_press(DIGITAL_DOWN)) {
-			catapult.rapidfire(); //sets request for taskmanager
+			catapult.rapidfire(); //sets perpetual rapidfire request for taskmanager
 		}
 		
 		catapult.taskmanager(); //calling taskmanager on every cycle to handle catapult logic
