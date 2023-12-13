@@ -74,6 +74,8 @@ pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Control
 Pneumaticgroup flaps('A', false); //create a new pneumatic group for the flaps
 pros::ADIAnalogIn selector('B');
 Pneumaticgroup lifter('C', true);
+Pneumaticgroup pto('D', false);
+Pneumaticgroup claw('E', true);
 
 void cata () {
 	while (true) {
@@ -85,8 +87,6 @@ catapult.taskmanager();
 
 void autonomous() {
 	base.allbrake();
-
-	
 
 
 	if (selector.get_value() >= 2800 && selector.get_value() <= 3310) {//opposing side (offensive)
@@ -101,8 +101,6 @@ void autonomous() {
 		base.turnto(49);//47
 
 		base.go(32);
-
-
 
 	} else if (selector.get_value() >= 1500 && selector.get_value() <= 2100) {
 		pros::lcd::set_text(3, "WPWPWPW");
@@ -130,10 +128,6 @@ void autonomous() {
 		//last one
 
 
-
-
-		
-		
 	}else {//skills
 		pros::lcd::set_text(3, "new skills");
 
@@ -158,10 +152,6 @@ void autonomous() {
 		base.turnto(45);
 
 		base.gotime(.75, true);
-
-
-
-
 
 	}
 	
@@ -191,6 +181,8 @@ void autonomous() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
+
+bool climbingmode = false;
 void opcontrol() {
 	
 
@@ -205,7 +197,7 @@ void opcontrol() {
 		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
 
 
-		pros::lcd::set_text(3, "emergency test"); //upload tester (change the string to see if the code is new)
+		pros::lcd::set_text(3, "climb test"); //upload tester (change the string to see if the code is new)
 
 
 		
@@ -234,7 +226,7 @@ void opcontrol() {
 		// Catapult commands on R1 and Down
 		if (master.get_digital(DIGITAL_B)) {
 			catapult.requestemergency(true);
-			pros::lcd::set_text(3, "pig test"); //upload tester (change the string to see if the code is new)
+			pros::lcd::set_text(3, "emergency test"); //upload tester (change the string to see if the code is new)
 		} else {
 			catapult.requestemergency(false); //In case of hardware emergency, relieve motor
 		}
@@ -247,7 +239,6 @@ void opcontrol() {
 			catapult.rapidfire(); //sets perpetual rapidfire request for taskmanager
 		}
 		
-		catapult.taskmanager(); //calling taskmanager on every cycle to handle catapult logic
 
 		// flaps only open during R2 pressed, then auto-close
 		if (master.get_digital(DIGITAL_R2)) {
@@ -257,9 +248,33 @@ void opcontrol() {
 		}
 
 
-		if (master.get_digital_new_press(DIGITAL_UP)) {
-			lifter.toggle();
+
+		if (master.get_digital_new_press(DIGITAL_LEFT)) {
+			if (climbingmode == true) {
+				climbingmode = false;
+			} else if (climbingmode == false) {
+				climbingmode = true;
+			}
 		}
+
+		if (climbingmode == true) {
+			catapult.requestemergency(true);
+			if (master.get_digital_new_press(DIGITAL_UP)) {
+				lifter.toggle();
+			}
+			if (master.get_digital_new_press(DIGITAL_RIGHT)) {
+				pto.toggle();
+			}
+			if (master.get_digital_new_press(DIGITAL_Y)) {
+				claw.toggle();
+			}
+
+		}
+
+
+		catapult.taskmanager(); //calling taskmanager on every cycle to handle catapult logic
+
+
 		
 		pros::delay(20); //20 msec before re-running the loop
 	}
