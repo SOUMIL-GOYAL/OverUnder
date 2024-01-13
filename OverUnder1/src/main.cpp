@@ -67,8 +67,8 @@ void competition_initialize() {}
 
 
 
-Drive base(-4,-13,-19,8,14,9, 17); //create a new Drive object
-Intake intake(-11); //create a new Intake object
+Drive base(-4,-13,-19,8,14,9, 17, 10); //create a new Drive object
+Intake intake(15); //create a new Intake object
 Catapult catapult(5, 12, 9000, 19000); //create a new Catapult object
 pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object (remote)
 Pneumaticgroup flaps('A', false); //create a new pneumatic group for the flaps
@@ -76,6 +76,9 @@ pros::ADIAnalogIn selector('B');
 Pneumaticgroup lifter('C', true);
 Pneumaticgroup pto('D', false);
 Pneumaticgroup claw('E', true);
+pros::ADIAnalogIn loaddetector ('F');
+
+
 
 void cata () {
 	while (true) {
@@ -100,7 +103,7 @@ void autonomous() {
 		base.go(26);
 		base.turnto(49);//47
 
-		base.go(32);
+		base.go(35);
 
 	} else if (selector.get_value() >= 1500 && selector.get_value() <= 2100) {
 		pros::lcd::set_text(3, "WPWPWPW");
@@ -124,14 +127,40 @@ void autonomous() {
 		base.go(29);
 
 		base.turnto(135);
-		base.go(15);
+		base.go(11);
 		//last one
 
 
 	}else {//skills
 		pros::lcd::set_text(3, "new skills");
 
+		// while (true) {
+		// 	pros::lcd::set_text(6, "time: " + int(pros::millis()));
+		// 	pros::delay(100);
+		// }
 		pros::Task my_task(cata);
+		base.godistance(50);
+		base.turnto(0);
+		base.godistance(-20);
+
+		pros::delay(30000);
+		
+
+		//starts at 20.5
+		base.godistance(30);
+		base.turnto(0);
+		base.godistance(40);
+		base.turnto(0);
+		base.godistance(50);
+		base.turnto(0);
+		base.godistance(60);
+		base.turnto(0);
+		base.godistance(70);
+
+		pros::delay(3000);
+		base.godistance(3);
+
+		//pros::Task my_task(cata);
 		catapult.rapidfire();
 		pros::delay(45000);
 		catapult.reload();
@@ -148,10 +177,13 @@ void autonomous() {
 		base.gotime(.75, true);
 		base.turnto(45);
 
-		base.gotime(5, false);
+		//base.gotime(5, false);
+		base.godistance(60);
 		base.turnto(45);
+		//base.gotime(.75, true);
+		base.godistance(50);
 
-		base.gotime(.75, true);
+		
 
 	}
 	

@@ -1,14 +1,15 @@
 #include "drive.hpp"
 #include "main.h"
 
-Drive::Drive (int lb, int lm, int lf, int rb, int rm, int rf, int inertialport)
+Drive::Drive (int lb, int lm, int lf, int rb, int rm, int rf, int inertialport, int distanceport)
 : leftback(lb, pros::E_MOTOR_GEARSET_06), 
 leftmiddle(lm, pros::E_MOTOR_GEARSET_06), 
 leftfront(lf, pros::E_MOTOR_GEARSET_06), 
 rightback(rb, pros::E_MOTOR_GEARSET_06), 
 rightmiddle(rm, pros::E_MOTOR_GEARSET_06), 
 rightfront(rf, pros::E_MOTOR_GEARSET_06),
-inertia(inertialport) {
+inertia(inertialport), 
+distance(distanceport) {
 
     // using namespace okapi;
 
@@ -138,4 +139,39 @@ void Drive::gotime (double secs, bool direction) {
     pros::delay(secs * 1000);
     setleft(0);
     setright(0);
+}
+
+void Drive::godistance (double inches) {
+    double previousresult = 0;
+    while (true) {
+        // double error = (inches/3.7699)*180 - (distance.get()/3.7699)*180 + starting;
+
+        double error = (((distance.get() / 25.4) - inches)/3.7699) * 180 ;
+
+        double result = error * kp;
+
+        if ((previousresult - result) <= -ka) {
+            result = previousresult + ka;
+        } else if ((previousresult - result) >= ka) {
+            result = previousresult - ka;
+        }
+        
+        setright(int(result));
+        setleft(int(result));
+
+
+
+        if (error <= .5 && error >= -.5) {
+            setleft(0);
+            setright(0);
+            break;
+        }
+
+        previousresult = result;
+
+        pros::lcd::set_text(4, "distance: " + std::to_string(distance.get()));
+        pros::lcd::set_text(4, "error: " + std::to_string(error));
+
+        pros::delay(20);
+    }
 }
