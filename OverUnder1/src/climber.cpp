@@ -9,12 +9,13 @@ Climber::Climber (Pneumaticgroup lift, Pneumaticgroup hook, Pneumaticgroup ptoit
 }
 
 void Climber::goup() {
+    int delaybetween = 300;
     lifter.toggle();
-    pros::delay(500);
-    hooker.toggle();
-    pros::delay(500);
+    // pros::delay(delaybetween);
     pto.toggle();
-    pros::delay(500);
+    pros::delay(delaybetween);
+    hooker.toggle();
+    pros::delay(delaybetween);
     lifter.toggle();
 }
 

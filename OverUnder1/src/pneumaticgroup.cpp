@@ -20,11 +20,9 @@ void Pneumaticgroup::closeboth () {
 }
 
 void Pneumaticgroup::toggle () {
-    if (status == true) {
-        solenoid.set_value(false);
-        status = false;
-    } else if (status == false) {
-        solenoid.set_value(true);
-        status = true;
+    if (status == false) {
+        openboth();
+    } else if (status == true) {
+        closeboth();
     }
 }
