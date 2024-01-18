@@ -143,10 +143,14 @@ void Drive::gotime (double secs, bool direction) {
 
 void Drive::godistance (double inches) {
     double previousresult = 0;
+    int counter = 0;
     while (true) {
         // double error = (inches/3.7699)*180 - (distance.get()/3.7699)*180 + starting;
 
-        double error = (((distance.get() / 25.4) - inches)/3.7699) * 180 ;
+        //double error = (((distance.get() / 25.4) - inches)/3.7699) * 180 ;
+
+        double error = distance.get() - (inches * 25.4);
+
 
         double result = error * kp;
 
@@ -156,12 +160,26 @@ void Drive::godistance (double inches) {
             result = previousresult - ka;
         }
         
-        setright(int(result));
-        setleft(int(result));
+        int speed = 200;
+
+        if (error >= 0) {
+            setright(speed);
+            setleft(speed);
+        } else {
+           setright(-speed);
+            setleft(-speed); 
+        }
+        
 
 
 
-        if (error <= .5 && error >= -.5) {
+        if (error <= 25.4 && error >= -25.4) {
+            setleft(0);
+            setright(0);
+            break;
+        }
+
+        if (counter >= 180) {
             setleft(0);
             setright(0);
             break;
@@ -172,6 +190,7 @@ void Drive::godistance (double inches) {
         pros::lcd::set_text(4, "distance: " + std::to_string(distance.get()));
         pros::lcd::set_text(4, "error: " + std::to_string(error));
 
+        counter++;
         pros::delay(20);
     }
 }

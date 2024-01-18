@@ -4,6 +4,7 @@
 #include "intake.hpp"
 #include "catapult.hpp"
 #include "pneumaticgroup.hpp"
+#include "climber.hpp"
 
 /**
  * A callback function for LLEMU's center button.
@@ -73,10 +74,11 @@ Catapult catapult(5, 12, 9000, 19000); //create a new Catapult object
 pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object (remote)
 Pneumaticgroup flaps('A', false); //create a new pneumatic group for the flaps
 pros::ADIAnalogIn selector('B');
-Pneumaticgroup lifter('C', true);
+Pneumaticgroup lifter('C', false);
 Pneumaticgroup pto('D', false);
-Pneumaticgroup claw('E', true);
+Pneumaticgroup claw('E', false);
 pros::ADIAnalogIn loaddetector ('F');
+Climber climb(lifter, claw, pto);
 
 
 
@@ -106,29 +108,45 @@ void autonomous() {
 		base.go(35);
 
 	} else if (selector.get_value() >= 1500 && selector.get_value() <= 2100) {
-		pros::lcd::set_text(3, "WPWPWPW");
 
 
-		pros::Task my_task(cata);
-		flaps.openboth();
-		catapult.reload();
+		pros::lcd::set_text(3, "offense");
+		base.gotime(2, false);
 
-		base.turnto(-70);
+		base.go(5);
 
-		flaps.closeboth();
+		base.turnto(0);
+		base.go(26);
+		base.turnto(-49);//47
 
-		catapult.launch();
-		pros::delay(1000);
+		intake.outmax();
+		base.go(35);
 
-		base.go(-5);
 
-		base.turnto(157);
 
-		base.go(29);
+		// pros::lcd::set_text(3, "WPWPWPW");
 
-		base.turnto(135);
-		base.go(11);
-		//last one
+
+		// pros::Task my_task(cata);
+		// flaps.openboth();
+		// catapult.reload();
+
+		// base.turnto(-70);
+
+		// flaps.closeboth();
+
+		// catapult.launch();
+		// pros::delay(1000);
+
+		// base.go(-5);
+
+		// base.turnto(157);
+
+		// base.go(29);
+
+		// base.turnto(135);
+		// base.go(11);
+		// //last one
 
 
 	}else {//skills
@@ -138,7 +156,27 @@ void autonomous() {
 		// 	pros::lcd::set_text(6, "time: " + int(pros::millis()));
 		// 	pros::delay(100);
 		// }
+
+
+
 		pros::Task my_task(cata);
+		catapult.reload();
+		//catapult.rapidfire();
+		pros::delay(45000);
+		catapult.reload();
+		base.godistance(65);
+		base.turnto(0);
+		base.godistance(30);
+		base.turnto(0);
+		base.godistance(65);
+		base.turnto(0);
+		base.godistance(30);
+
+
+
+		pros::delay(30000);
+
+
 		base.godistance(50);
 		base.turnto(0);
 		base.godistance(-20);
@@ -300,8 +338,12 @@ void opcontrol() {
 			if (master.get_digital_new_press(DIGITAL_Y)) {
 				claw.toggle();
 			}
-
+			if (master.get_digital_new_press(DIGITAL_A)) {
+				climb.goup();
+			}
 		}
+
+		
 
 
 		catapult.taskmanager(); //calling taskmanager on every cycle to handle catapult logic
