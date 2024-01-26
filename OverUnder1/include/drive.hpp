@@ -1,4 +1,6 @@
 #include "main.h"
+#include "lemlib/api.hpp"
+
 
 #ifndef DRIVE_HPP
 #define DRIVE_HPP
@@ -13,6 +15,16 @@ private:
     //okapi::ChassisControllerIntegrated odomoetry;
     //okapi::ChassisControllerPID odometry;
     // std::shared_ptr<okapi::OdomChassisController> odometry;
+
+    pros::MotorGroup leftmotors;
+    pros::MotorGroup rightmotors;
+    lemlib::Drivetrain_t drivetrain;
+    lemlib::OdomSensors_t sensors;
+    lemlib::ChassisController_t lateralController;
+    lemlib::ChassisController_t angularController;
+    lemlib::Chassis chassis;
+
+
     double DL;
     double DR;
 
@@ -33,6 +45,9 @@ public:
     void go(double inches);
     void gotime(double secs, bool direction);
     void godistance(double inches);
+
+    void printposition();
+
 };
 
 

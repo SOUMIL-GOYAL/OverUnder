@@ -1,4 +1,6 @@
 #include "main.h"
+#include "lemlib/api.hpp"
+
 
 #include "drive.hpp"
 #include "intake.hpp"
@@ -345,7 +347,7 @@ void opcontrol() {
 
 		
 
-
+		base.printposition();
 		catapult.taskmanager(); //calling taskmanager on every cycle to handle catapult logic
 
 

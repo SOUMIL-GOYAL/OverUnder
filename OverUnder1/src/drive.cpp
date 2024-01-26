@@ -1,5 +1,7 @@
 #include "drive.hpp"
 #include "main.h"
+#include "lemlib/api.hpp"
+
 
 Drive::Drive (int lb, int lm, int lf, int rb, int rm, int rf, int inertialport, int distanceport)
 : leftback(lb, pros::E_MOTOR_GEARSET_06), 
@@ -9,7 +11,42 @@ rightback(rb, pros::E_MOTOR_GEARSET_06),
 rightmiddle(rm, pros::E_MOTOR_GEARSET_06), 
 rightfront(rf, pros::E_MOTOR_GEARSET_06),
 inertia(inertialport), 
-distance(distanceport) {
+distance(distanceport),
+leftmotors({leftback, leftmiddle, leftfront}),
+rightmotors({rightback, rightmiddle, rightfront}),
+drivetrain {
+    &leftmotors, // left drivetrain motors
+    &rightmotors, // right drivetrain motors
+    12, // track width
+    4, // wheel diameter
+    600*(36/72) // wheel rpm
+},
+sensors {
+    nullptr, // vertical tracking wheel 1
+    nullptr, // vertical tracking wheel 2
+    nullptr, // horizontal tracking wheel 1
+    nullptr, // we don't have a second tracking wheel, so we set it to nullptr
+    &inertia // inertial sensor
+},
+lateralController {
+    8, // kP
+    30, // kD
+    1, // smallErrorRange
+    100, // smallErrorTimeout
+    3, // largeErrorRange
+    500, // largeErrorTimeout
+    5 // slew rate
+},
+angularController {
+    4, // kP
+    40, // kD
+    1, // smallErrorRange
+    100, // smallErrorTimeout
+    3, // largeErrorRange
+    500, // largeErrorTimeout
+    40 // slew rate
+},
+chassis(drivetrain, lateralController, angularController, sensors) {
 
     // using namespace okapi;
 
@@ -193,4 +230,11 @@ void Drive::godistance (double inches) {
         counter++;
         pros::delay(20);
     }
+}
+
+void Drive::printposition () {
+    lemlib::Pose pose = chassis.getPose(); // get the current position of the robot
+    pros::lcd::print(5, "x: %f", pose.x); // print the x position
+    pros::lcd::print(6, "y: %f", pose.y); // print the y position
+    pros::lcd::print(7, "heading: %f", pose.theta); // print the heading
 }
