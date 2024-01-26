@@ -1,4 +1,6 @@
 #include "main.h"
+#include "lemlib/api.hpp"
+
 
 #ifndef DRIVE_HPP
 #define DRIVE_HPP
@@ -10,6 +12,16 @@ private:
     pros::motor_gearset_e ratio = pros::E_MOTOR_GEARSET_06; //6:1 gear-ratio (blue cartridge)
     pros::IMU inertia;
     pros::Distance distance;
+
+
+    pros::MotorGroup leftmotors;
+    pros::MotorGroup rightmotors;
+    lemlib::Drivetrain_t drivetrain;
+    lemlib::OdomSensors_t sensors;
+    lemlib::ChassisController_t lateralController;
+    lemlib::ChassisController_t angularController;
+    lemlib::Chassis chassis;
+
     //okapi::ChassisControllerIntegrated odomoetry;
     //okapi::ChassisControllerPID odometry;
     // std::shared_ptr<okapi::OdomChassisController> odometry;
@@ -33,6 +45,8 @@ public:
     void go(double inches);
     void gotime(double secs, bool direction);
     void godistance(double inches);
+
+    void printposition();
 };
 
 

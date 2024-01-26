@@ -1,4 +1,5 @@
 #include "main.h"
+#include "lemlib/api.hpp"
 
 #include "drive.hpp"
 #include "intake.hpp"
