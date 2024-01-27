@@ -79,7 +79,8 @@ pros::ADIAnalogIn selector('B');
 Pneumaticgroup lifter('C', false);
 Pneumaticgroup pto('D', false);
 Pneumaticgroup claw('E', false);
-pros::ADIAnalogIn loaddetector ('F');
+Pneumaticgroup awp('F', false);
+pros::ADIAnalogIn loaddetector ('G');
 Climber climb(lifter, claw, pto);
 
 
@@ -94,6 +95,12 @@ catapult.taskmanager();
 
 void autonomous() {
 	base.allbrake();
+
+	awp.toggle();
+	pros::delay(2000);
+	awp.toggle();
+	pros::delay(2000);
+
 
 
 	if (selector.get_value() >= 2800 && selector.get_value() <= 3310) {//opposing side (offensive)
