@@ -72,7 +72,7 @@ void competition_initialize() {}
 
 Drive base(-4,-13,-19,8,14,9, 17, 10); //create a new Drive object
 Intake intake(15); //create a new Intake object
-Catapult catapult(5, 12, 9000, 19000); //create a new Catapult object
+Catapult catapult(-5, 12, 134.38*100, 183*100); //create a new Catapult object
 pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object (remote)
 Pneumaticgroup flaps('A', false); //create a new pneumatic group for the flaps
 pros::ADIAnalogIn selector('B');
@@ -94,18 +94,26 @@ catapult.taskmanager();
 }
 
 void autonomous() {
-	base.allbrake();
-
-	awp.toggle();
-	pros::delay(2000);
-	awp.toggle();
-	pros::delay(2000);
-
-
 
 	if (selector.get_value() >= 2800 && selector.get_value() <= 3310) {//opposing side (offensive)
-
 		pros::lcd::set_text(3, "offense");
+
+		pros::Task my_task(cata);
+		base.go(6);
+		intake.inmax();
+		base.go(-27);
+		base.turnto(45);
+		base.go(-16);
+		base.turnto(90);
+		base.gotime(1.5, false);
+		base.go(5);
+		base.turnto(-90);
+		base.go(-5);
+		base.turnto(-135);
+		awp.toggle();
+		base.go(-10);
+
+
 		base.gotime(2, false);
 
 		base.go(5);
@@ -117,19 +125,33 @@ void autonomous() {
 		base.go(35);
 
 	} else if (selector.get_value() >= 1500 && selector.get_value() <= 2100) {
-
-
-		pros::lcd::set_text(3, "offense");
-		base.gotime(2, false);
-
+		pros::lcd::set_text(3, "Win Point");
+		
+		base.go(5);
+		awp.openboth();
+		base.go(-11);
+		base.go(25);
+		awp.closeboth();
+		base.turnto(45);
+		intake.outmax();
+		//base.gotime(1, true);
 		base.go(5);
 
-		base.turnto(0);
-		base.go(26);
-		base.turnto(-49);//47
 
-		intake.outmax();
-		base.go(35);
+
+
+
+
+		// base.gotime(2, false);
+
+		// base.go(5);
+
+		// base.turnto(0);
+		// base.go(26);
+		// base.turnto(-49);//47
+
+		// intake.outmax();
+		// base.go(35);
 
 
 
@@ -158,14 +180,34 @@ void autonomous() {
 		// //last one
 
 
-	}else {//skills
+	} else {//skills
 		pros::lcd::set_text(3, "new skills");
 
 		// while (true) {
 		// 	pros::lcd::set_text(6, "time: " + int(pros::millis()));
 		// 	pros::delay(100);
 		// }
+		base.allbrake();
 
+		base.turnto(-23);
+		//flaps.openboth();
+		base.go(60);
+		base.turnto(-145);
+		base.gotime(2, false);
+		base.gotime(.5, true);
+		base.turnto(215-180);
+		flaps.openboth();
+		base.gotime(.5, true);
+		base.go(-30);
+
+
+
+
+		awp.toggle();
+		pros::delay(2000);
+		awp.toggle();
+		pros::delay(2000);
+		//base.followpath("/paths/samplepath.txt");
 
 
 		pros::Task my_task(cata);

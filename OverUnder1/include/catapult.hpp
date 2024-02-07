@@ -6,7 +6,7 @@
     class Catapult {
         private:
             pros::Motor motor;
-            pros::motor_gearset_e ratio = pros::E_MOTOR_GEARSET_18; //18:1 gear-ratio (green cartridge)
+            pros::motor_gearset_e ratio = pros::E_MOTOR_GEARSET_36; //18:1 gear-ratio (green cartridge)
             pros::Rotation sensor;
             bool requestshot = false;
             bool requestreload = true;

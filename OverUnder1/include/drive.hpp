@@ -48,6 +48,7 @@ public:
 
     void printposition();
 
+    void followpath(char* filepath);
 };
 
 

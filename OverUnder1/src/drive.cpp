@@ -165,12 +165,13 @@ void Drive::go (double inches) {
 
 
 void Drive::gotime (double secs, bool direction) {
+    int speed = 600;
     if (direction) {
-        setright(500);
-        setleft(500);
+        setright(speed);
+        setleft(speed);
     } else {
-        setright(-500);
-        setleft(-500);
+        setright(-speed);
+        setleft(-speed);
     }
     
     pros::delay(secs * 1000);
@@ -238,3 +239,8 @@ void Drive::printposition () {
     pros::lcd::print(6, "y: %f", pose.y); // print the y position
     pros::lcd::print(7, "heading: %f", pose.theta); // print the heading
 }
+
+
+void Drive::followpath(char* filepath) {
+    chassis.follow(filepath, 5000, 5, true);
+};

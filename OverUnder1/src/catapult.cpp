@@ -8,7 +8,7 @@ Catapult::Catapult (int motorport, int sensorport, int top_angle, int bottom_ang
     emergency = false;
     
     tolerance = 500;
-    kp = .03;
+    kp = .01;
     ka = 1;
     
 }
@@ -24,7 +24,7 @@ void Catapult::taskmanager () {
 
     } else if (requestshot == true) {
         if (getangle() >= top) {
-            motor.move_velocity(-300);
+            motor.move_velocity(-75);
         } else {
             requestshot = false;
             reload();
@@ -32,14 +32,14 @@ void Catapult::taskmanager () {
         motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
     } else if (requestreload == true) {
+        pros::lcd::set_text(3, "reloading");
         if (getangle() < bottom){
             int error = bottom - getangle();
 
             if (error <= tolerance && error >= -tolerance) {
                 requestreload = false;
                 motor.move_velocity(0);
-            motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-
+                motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
             } else {
                 double result = kp * error;
                 motor.move_velocity(-result);
