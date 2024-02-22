@@ -234,10 +234,18 @@ void Drive::godistance (double inches) {
 }
 
 void Drive::printposition () {
-    lemlib::Pose pose = chassis.getPose(); // get the current position of the robot
-    pros::lcd::print(5, "x: %f", pose.x); // print the x position
-    pros::lcd::print(6, "y: %f", pose.y); // print the y position
-    pros::lcd::print(7, "heading: %f", pose.theta); // print the heading
+    //lemlib::Pose pose = chassis.getPose(); // get the current position of the robot
+    // pros::lcd::print(5, "x: %f", pose.x); // print the x position
+    // pros::lcd::print(6, "y: %f", pose.y); // print the y position
+    // pros::lcd::print(7, "heading: %f", pose.theta); // print the heading
+    double wheelcir = 2*3.1415926535*(2);
+    rightback.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
+    double dr = (rightback.get_position() / 360) * wheelcir;
+    double dl = (leftback.get_position() / 360) * wheelcir;
+    double odomangle = fmod((((lround(fmod(inertia.get_rotation(),360)) + 540) % 360 - 180) + 540), 360) - 180;//(dr-dl)/14.5;
+    pros::lcd::print(5, "x: %f", (((dr+dl)/2)*cos(odomangle/2))); // print the x position
+    pros::lcd::print(6, "y: %f", (((dr+dl)/2)*sin(odomangle/2))); // print the y position
+    pros::lcd::print(7, "heading: %f", (odomangle)); // print the heading
 }
 
 

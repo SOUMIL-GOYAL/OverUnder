@@ -72,7 +72,7 @@ void competition_initialize() {}
 
 Drive base(-4,-13,-19,8,14,9, 17, 10); //create a new Drive object
 Intake intake(15); //create a new Intake object
-Catapult catapult(-5, 12, 134.38*100, 183*100); //create a new Catapult object
+Catapult catapult(-5, 12, 170*100, 200*100); //create a new Catapult object
 pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object (remote)
 Pneumaticgroup flaps('A', false); //create a new pneumatic group for the flaps
 pros::ADIAnalogIn selector('B');
@@ -87,8 +87,17 @@ Climber climb(lifter, claw, pto);
 
 void cata () {
 	while (true) {
-catapult.taskmanager();
-	pros::delay(30);
+		catapult.taskmanager();
+		pros::delay(30);
+	}
+	
+}
+
+
+void printlocation () {
+	while (true) {
+		base.printposition();
+		pros::delay(30);
 	}
 	
 }
@@ -98,20 +107,20 @@ void autonomous() {
 	if (selector.get_value() >= 2800 && selector.get_value() <= 3310) {//opposing side (offensive)
 		pros::lcd::set_text(3, "offense");
 
-		pros::Task my_task(cata);
-		base.go(6);
-		intake.inmax();
-		base.go(-27);
-		base.turnto(45);
-		base.go(-16);
-		base.turnto(90);
-		base.gotime(1.5, false);
-		base.go(5);
-		base.turnto(-90);
-		base.go(-5);
-		base.turnto(-135);
-		awp.toggle();
-		base.go(-10);
+		// pros::Task my_task(cata);
+		// base.go(6);
+		// intake.inmax();
+		// base.go(-27);
+		// base.turnto(45);
+		// base.go(-16);
+		// base.turnto(90);
+		// base.gotime(1.5, false);
+		// base.go(5);
+		// base.turnto(-90);
+		// base.go(-5);
+		// base.turnto(-135);
+		// awp.toggle();
+		// base.go(-10);
 
 
 		base.gotime(2, false);
@@ -129,14 +138,23 @@ void autonomous() {
 		
 		base.go(5);
 		awp.openboth();
-		base.go(-11);
-		base.go(25);
-		awp.closeboth();
-		base.turnto(45);
-		intake.outmax();
-		//base.gotime(1, true);
+		base.go(-6);
+		base.turnto(-25);
 		base.go(5);
+		awp.closeboth();
 
+		base.turnto(0);
+		base.go(2);
+		base.turnto(45);
+		base.gotime(.25, true);
+
+		base.go(-5);
+		base.turnto(0);
+		base.go(-30);
+
+
+		base.turnto(-45);
+		base.go(-35);
 
 
 
@@ -187,90 +205,100 @@ void autonomous() {
 		// 	pros::lcd::set_text(6, "time: " + int(pros::millis()));
 		// 	pros::delay(100);
 		// }
+		pros::Task my_task(cata);
+		//catapult.rapidfire();
+		for (int i = 0; i < 30; i++) {
+			catapult.reload();
+			pros::delay(1.5 * 1000);
+			catapult.launch();
+		}
+		//pros::delay(45 * 1000);
 		base.allbrake();
-
 		base.turnto(-23);
-		//flaps.openboth();
-		base.go(60);
+		base.go(63);
 		base.turnto(-145);
 		base.gotime(2, false);
-		base.gotime(.5, true);
+		base.go(30);
 		base.turnto(215-180);
 		flaps.openboth();
 		base.gotime(.5, true);
 		base.go(-30);
-
-
-
-
-		awp.toggle();
-		pros::delay(2000);
-		awp.toggle();
-		pros::delay(2000);
-		//base.followpath("/paths/samplepath.txt");
-
-
-		pros::Task my_task(cata);
-		catapult.reload();
-		//catapult.rapidfire();
-		pros::delay(45000);
-		catapult.reload();
-		base.godistance(65);
 		base.turnto(0);
-		base.godistance(30);
-		base.turnto(0);
-		base.godistance(65);
-		base.turnto(0);
-		base.godistance(30);
+		base.gotime(.4, true);
+		base.gotime(.4, false);
 
 
 
-		pros::delay(30000);
 
 
-		base.godistance(50);
-		base.turnto(0);
-		base.godistance(-20);
+		// awp.toggle();
+		// pros::delay(2000);
+		// awp.toggle();
+		// pros::delay(2000);
+		// //base.followpath("/paths/samplepath.txt");
 
-		pros::delay(30000);
+
+		// pros::Task my_task(cata);
+		// catapult.reload();
+		// //catapult.rapidfire();
+		// pros::delay(45000);
+		// catapult.reload();
+		// base.godistance(65);
+		// base.turnto(0);
+		// base.godistance(30);
+		// base.turnto(0);
+		// base.godistance(65);
+		// base.turnto(0);
+		// base.godistance(30);
+
+
+
+		// pros::delay(30000);
+
+
+		// base.godistance(50);
+		// base.turnto(0);
+		// base.godistance(-20);
+
+		// pros::delay(30000);
 		
 
-		//starts at 20.5
-		base.godistance(30);
-		base.turnto(0);
-		base.godistance(40);
-		base.turnto(0);
-		base.godistance(50);
-		base.turnto(0);
-		base.godistance(60);
-		base.turnto(0);
-		base.godistance(70);
+		// //starts at 20.5
+		// base.godistance(30);
+		// base.turnto(0);
+		// base.godistance(40);
+		// base.turnto(0);
+		// base.godistance(50);
+		// base.turnto(0);
+		// base.godistance(60);
+		// base.turnto(0);
+		// base.godistance(70);
 
-		pros::delay(3000);
-		base.godistance(3);
+		// pros::delay(3000);
+		// base.godistance(3);
 
-		//pros::Task my_task(cata);
-		catapult.rapidfire();
-		pros::delay(45000);
-		catapult.reload();
+		// //pros::Task my_task(cata);
+		// catapult.rapidfire();
+		// pros::delay(45000);
+		// catapult.reload();
 
-		//catapult.autofire(5);
+		// //catapult.autofire(5);
 
-		base.go(-3);
+		// base.go(-3);
 
-		base.turnto(45);
+		// base.turnto(45);
 
 
-		base.gotime(5, false);
-		base.turnto(45);
-		base.gotime(.75, true);
-		base.turnto(45);
+		// base.gotime(5, false);
+		// base.turnto(45);
+		// base.gotime(.75, true);
+		// base.turnto(45);
 
-		//base.gotime(5, false);
-		base.godistance(60);
-		base.turnto(45);
-		//base.gotime(.75, true);
-		base.godistance(50);
+		// //base.gotime(5, false);
+		// base.godistance(60);
+		// base.turnto(45);
+		// //base.gotime(.75, true);
+		// base.godistance(50);
 
 		
 
