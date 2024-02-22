@@ -123,15 +123,26 @@ void autonomous() {
 		// base.go(-10);
 
 
-		base.gotime(2, false);
-
-		base.go(5);
-
-		base.turnto(0);
-		base.go(26);
-		base.turnto(49);//47
-
-		base.go(35);
+		base.go(-32);
+		base.turnto(90);
+		intake.inmax();
+		base.go(23);
+		intake.inmax();
+		base.turnto(180);
+		base.go(14);
+		base.turnto(-90);
+		base.go(6);
+		intake.outmax();
+		base.go(-8);
+		flaps.openboth();
+		base.gotime(.7, true);
+		flaps.closeboth();
+		base.go(-28);
+		base.turnto(180);
+		awp.openboth();
+		base.go(-30);
+		base.gotime(.6, false);
+		
 
 	} else if (selector.get_value() >= 1500 && selector.get_value() <= 2100) {
 		pros::lcd::set_text(3, "Win Point");
@@ -337,6 +348,7 @@ void opcontrol() {
 
 
 	base.allcoast(); //since it's driver-control, let the motors not auto-brake
+	awp.closeboth();
 
 	
 
