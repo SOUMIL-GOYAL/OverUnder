@@ -35,6 +35,7 @@ void initialize() {
 	pros::lcd::set_text(1, "Hello PROS User!");
 
 	pros::lcd::register_btn1_cb(on_center_button);
+	base.chassis.calibrate();
 }
 
 /**
@@ -71,7 +72,7 @@ void competition_initialize() {}
 
 
 Drive base(-4,-13,-19,8,14,9, 17, 10); //create a new Drive object
-Intake intake(15); //create a new Intake object
+Intake intake(2); //create a new Intake object
 Catapult catapult(-5, 12, 170*100, 200*100); //create a new Catapult object
 pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object (remote)
 Pneumaticgroup flaps('A', false); //create a new pneumatic group for the flaps
@@ -129,9 +130,9 @@ void autonomous() {
 		base.go(23);
 		intake.inmax();
 		base.turnto(180);
-		base.go(14);
+		base.go(14); 
 		base.turnto(-90);
-		base.go(6);
+		base.go(8);
 		intake.outmax();
 		base.go(-8);
 		flaps.openboth();
@@ -140,8 +141,7 @@ void autonomous() {
 		base.go(-28);
 		base.turnto(180);
 		awp.openboth();
-		base.go(-30);
-		base.gotime(.6, false);
+		base.gotime(2, false);
 		
 
 	} else if (selector.get_value() >= 1500 && selector.get_value() <= 2100) {
@@ -150,22 +150,22 @@ void autonomous() {
 		base.go(5);
 		awp.openboth();
 		base.go(-6);
-		base.turnto(-25);
+		base.turnto(-27);
 		base.go(5);
 		awp.closeboth();
 
 		base.turnto(0);
 		base.go(2);
 		base.turnto(45);
-		base.gotime(.25, true);
+		base.gotime(.4, true);
 
 		base.go(-5);
 		base.turnto(0);
-		base.go(-30);
+		base.go(-19.5);
 
 
 		base.turnto(-45);
-		base.go(-35);
+		base.go(-33);
 
 
 
@@ -216,27 +216,36 @@ void autonomous() {
 		// 	pros::lcd::set_text(6, "time: " + int(pros::millis()));
 		// 	pros::delay(100);
 		// }
-		pros::Task my_task(cata);
-		//catapult.rapidfire();
-		for (int i = 0; i < 30; i++) {
-			catapult.reload();
-			pros::delay(1.5 * 1000);
-			catapult.launch();
-		}
-		//pros::delay(45 * 1000);
 		base.allbrake();
-		base.turnto(-23);
-		base.go(63);
+		
+		pros::Task my_task(cata);
+		////catapult.rapidfire();
+		 for (int i = 0; i < 48; i++) {
+		 	catapult.reload();
+		 	pros::delay(.8 * 1000);
+		 	catapult.launch();
+		}
+		catapult.requestemergency(true);
+		intake.outmax();
+		base.turnto(-25);
+		base.go(50);
 		base.turnto(-145);
+
+		
 		base.gotime(2, false);
-		base.go(30);
-		base.turnto(215-180);
-		flaps.openboth();
-		base.gotime(.5, true);
-		base.go(-30);
+		base.go(25);
 		base.turnto(0);
-		base.gotime(.4, true);
-		base.gotime(.4, false);
+		flaps.openboth();
+		base.gotime(.75, true);
+		base.go(-20);
+		flaps.closeboth();
+		base.turnto(-55);
+		base.go(40);
+		base.turnto(70);
+		flaps.openboth();
+		base.gotime(1, true);
+		flaps.closeboth();
+		base.gotime(.6, false);
 
 
 
@@ -349,6 +358,7 @@ void opcontrol() {
 
 	base.allcoast(); //since it's driver-control, let the motors not auto-brake
 	awp.closeboth();
+
 
 	
 

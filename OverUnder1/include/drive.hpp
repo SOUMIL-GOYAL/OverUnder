@@ -22,7 +22,6 @@ private:
     lemlib::OdomSensors_t sensors;
     lemlib::ChassisController_t lateralController;
     lemlib::ChassisController_t angularController;
-    lemlib::Chassis chassis;
 
 
     double DL;
@@ -49,6 +48,9 @@ public:
     void printposition();
 
     void followpath(char* filepath);
+
+    lemlib::Chassis chassis;
+
 };
 
 
