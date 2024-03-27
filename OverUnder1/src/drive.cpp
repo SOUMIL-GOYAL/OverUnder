@@ -62,31 +62,33 @@ chassis(drivetrain, lateralController, angularController, sensors) {
     // .withOdometry() // use the same scales as the chassis (above)
     // .buildOdometry(); // build an odometry chassis
 
-    double DL = 7;
-    double DR = 7;
+    double DL = 7; //center to left
+    double DR = 7; //center to right
 
-    kp = .7;
-    ki = 0;
-    ka = 5;
+    kp = .7; //P in PIA, proportionality constant
+    ki = 0; //I in PIA, intergration factor
+    ka = 5; //A in PIA, max acceleration
 
-    leftback.tare_position();
+    //reset encoders
+    leftback.tare_position(); 
     rightback.tare_position();
-
-  
 }
 
+//synchronizes all left motors to same speed
 void Drive::setleft (int velocity) {
     leftback.move_velocity(velocity);
     leftmiddle.move_velocity(velocity);
     leftfront.move_velocity(velocity);
 }
 
+//synchronizes all right motors to same speed
 void Drive::setright (int velocity) {
     rightback.move_velocity(velocity);
     rightmiddle.move_velocity(velocity);
     rightfront.move_velocity(velocity);
 }
 
+//synchronizes all motors to be loose
 void Drive::allcoast () {
     leftback.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     leftmiddle.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -96,6 +98,7 @@ void Drive::allcoast () {
     rightfront.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 }
 
+//synchronizes all motors to hold position
 void Drive::allbrake () {
     leftback.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     leftmiddle.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -105,6 +108,7 @@ void Drive::allbrake () {
     rightfront.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 }
 
+//Turns robot to absolute degree assignment, uses PID
 void Drive::turnto (double goal) {
     // double L = (leftback.get_position() / 360) * 4 * 3.1415926535;
     // double R = (rightback.get_position() / 360) * 4 * 3.1415926535;
@@ -131,6 +135,7 @@ void Drive::turnto (double goal) {
     }
 }
 
+//moves robot to relative distance assignment, negative numbers move backward, uses PIA
 void Drive::go (double inches) {
     double starting = leftback.get_position();
     double previousresult = 0;
@@ -164,7 +169,7 @@ void Drive::go (double inches) {
     }
 }
 
-
+//moves robot at high speed for assigned seconds in specified directions.
 void Drive::gotime (double secs, bool direction) {
     int speed = 600;
     if (direction) {
@@ -180,6 +185,7 @@ void Drive::gotime (double secs, bool direction) {
     setright(0);
 }
 
+//Uses distance sensor to move robot from an obstacle/wall
 void Drive::godistance (double inches) {
     double previousresult = 0;
     int counter = 0;
@@ -234,6 +240,8 @@ void Drive::godistance (double inches) {
     }
 }
 
+
+//A secondary GUI diagnosis method
 void Drive::printposition () {
     lemlib::Pose pose = chassis.getPose(); // get the current position of the robot
     pros::lcd::print(5, "x: %f", pose.x); // print the x position
@@ -249,7 +257,7 @@ void Drive::printposition () {
     // pros::lcd::print(7, "heading: %f", (odomangle)); // print the heading
 }
 
-
+//NOT WORKING, NEEDS EXTERNAL LIBRARIES
 void Drive::followpath(char* filepath) {
     chassis.follow(filepath, 5000, 5, true);
 };

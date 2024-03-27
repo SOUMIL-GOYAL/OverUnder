@@ -1,7 +1,8 @@
+//default, do not modify
 #include "main.h"
 #include "lemlib/api.hpp"
 
-
+//custom hpp files
 #include "drive.hpp"
 #include "intake.hpp"
 #include "catapult.hpp"
@@ -70,22 +71,22 @@ void competition_initialize() {}
 
 
 
-
+//Constructors for every subsystem to be used in both autonomous and tele-op
 Drive base(-4,-13,-19,8,14,9, 17, 10); //create a new Drive object
 Intake intake(2); //create a new Intake object
 Catapult catapult(-5, 12, 170*100, 200*100); //create a new Catapult object
 pros::Controller master(pros::E_CONTROLLER_MASTER); //create a new pros::Controller object (remote)
-Pneumaticgroup flaps('A', false); //create a new pneumatic group for the flaps
-pros::ADIAnalogIn selector('B');
-Pneumaticgroup lifter('C', false);
-Pneumaticgroup pto('D', false);
-Pneumaticgroup claw('E', false);
-Pneumaticgroup awp('F', false);
-pros::ADIAnalogIn loaddetector ('G');
-Climber climb(lifter, claw, pto);
+Pneumaticgroup flaps('A', false); //create a new pneumatic group for the flaps, set the starting as inverse
+pros::ADIAnalogIn selector('B'); //create a new analog sensor for the selector
+Pneumaticgroup lifter('C', false); //create a new pneumatic group for the lifter, set the starting as inverse
+Pneumaticgroup pto('D', false); //create a new pneumatic group for the gear-mover, set the starting as inverse
+Pneumaticgroup claw('E', false); //create a new pneumatic group for the claw, set the starting as inverse
+Pneumaticgroup awp('F', false); //create a new pneumatic group for the stick, set the starting as inverse
+pros::ADIAnalogIn loaddetector ('G'); //create a new analog sensor for the detector
+Climber climb(lifter, claw, pto); //create a new Climb object
 
 
-
+//Function defined here for use as a task (thread) later
 void cata () {
 	while (true) {
 		catapult.taskmanager();
@@ -94,7 +95,7 @@ void cata () {
 	
 }
 
-
+//Function for basic x and y on GUI
 void printlocation () {
 	while (true) {
 		base.printposition();
@@ -104,29 +105,13 @@ void printlocation () {
 }
 
 void autonomous() {
-
 	if (selector.get_value() >= 2800 && selector.get_value() <= 3310) {//opposing side (offensive)
 		pros::lcd::set_text(3, "offense");
-
-		// pros::Task my_task(cata);
-		// base.go(6);
-		// intake.inmax();
-		// base.go(-27);
-		// base.turnto(45);
-		// base.go(-16);
-		// base.turnto(90);
-		// base.gotime(1.5, false);
-		// base.go(5);
-		// base.turnto(-90);
-		// base.go(-5);
-		// base.turnto(-135);
-		// awp.toggle();
-		// base.go(-10);
-
-
+		//leaving the starting ball
 		base.go(-32);
 		base.turnto(90);
 		intake.inmax();
+		//ball-collecting
 		base.go(23);
 		intake.inmax();
 		base.turnto(180);
@@ -138,100 +123,53 @@ void autonomous() {
 		flaps.openboth();
 		base.gotime(.7, true);
 		flaps.closeboth();
+		//ending-touch
 		base.go(-28);
 		base.turnto(180);
 		awp.openboth();
 		base.gotime(2, false);
-		
-
 	} else if (selector.get_value() >= 1500 && selector.get_value() <= 2100) {
 		pros::lcd::set_text(3, "Win Point");
-		
+		//removal
 		base.go(5);
 		awp.openboth();
 		base.go(-6);
 		base.turnto(-27);
 		base.go(5);
 		awp.closeboth();
-
+		//scoring
 		base.turnto(0);
 		base.go(2);
 		base.turnto(45);
 		base.gotime(.4, true);
-
+		//positioning
 		base.go(-5);
 		base.turnto(0);
 		base.go(-19.5);
-
-
+		//touching
 		base.turnto(-45);
 		base.go(-33);
 
 
-
-
-
-		// base.gotime(2, false);
-
-		// base.go(5);
-
-		// base.turnto(0);
-		// base.go(26);
-		// base.turnto(-49);//47
-
-		// intake.outmax();
-		// base.go(35);
-
-
-
-		// pros::lcd::set_text(3, "WPWPWPW");
-
-
-		// pros::Task my_task(cata);
-		// flaps.openboth();
-		// catapult.reload();
-
-		// base.turnto(-70);
-
-		// flaps.closeboth();
-
-		// catapult.launch();
-		// pros::delay(1000);
-
-		// base.go(-5);
-
-		// base.turnto(157);
-
-		// base.go(29);
-
-		// base.turnto(135);
-		// base.go(11);
-		// //last one
-
-
 	} else {//skills
 		pros::lcd::set_text(3, "new skills");
-
-		// while (true) {
-		// 	pros::lcd::set_text(6, "time: " + int(pros::millis()));
-		// 	pros::delay(100);
-		// }
+		//for stability in large movements
 		base.allbrake();
 		
+		//thread
 		pros::Task my_task(cata);
-		////catapult.rapidfire();
 		 for (int i = 0; i < 48; i++) {
 		 	catapult.reload();
 		 	pros::delay(.8 * 1000);
 		 	catapult.launch();
 		}
+		//end thread and start to move
 		catapult.requestemergency(true);
 		intake.outmax();
 		base.turnto(-25);
 		base.go(50);
 		base.turnto(-145);
-
-		
+		//pushing balls in from 3 angles
 		base.gotime(2, false);
 		base.go(25);
 		base.turnto(0);
@@ -247,93 +185,9 @@ void autonomous() {
 		flaps.closeboth();
 		base.gotime(.6, false);
 
-
-
-
-
-		// awp.toggle();
-		// pros::delay(2000);
-		// awp.toggle();
-		// pros::delay(2000);
-		// //base.followpath("/paths/samplepath.txt");
-
-
-		// pros::Task my_task(cata);
-		// catapult.reload();
-		// //catapult.rapidfire();
-		// pros::delay(45000);
-		// catapult.reload();
-		// base.godistance(65);
-		// base.turnto(0);
-		// base.godistance(30);
-		// base.turnto(0);
-		// base.godistance(65);
-		// base.turnto(0);
-		// base.godistance(30);
-
-
-
-		// pros::delay(30000);
-
-
-		// base.godistance(50);
-		// base.turnto(0);
-		// base.godistance(-20);
-
-		// pros::delay(30000);
-		
-
-		// //starts at 20.5
-		// base.godistance(30);
-		// base.turnto(0);
-		// base.godistance(40);
-		// base.turnto(0);
-		// base.godistance(50);
-		// base.turnto(0);
-		// base.godistance(60);
-		// base.turnto(0);
-		// base.godistance(70);
-
-		// pros::delay(3000);
-		// base.godistance(3);
-
-		// //pros::Task my_task(cata);
-		// catapult.rapidfire();
-		// pros::delay(45000);
-		// catapult.reload();
-
-		// //catapult.autofire(5);
-
-		// base.go(-3);
-
-		// base.turnto(45);
-
-
-		// base.gotime(5, false);
-		// base.turnto(45);
-		// base.gotime(.75, true);
-		// base.turnto(45);
-
-		// //base.gotime(5, false);
-		// base.godistance(60);
-		// base.turnto(45);
-		// //base.gotime(.75, true);
-		// base.godistance(50);
-
-		
-
 	}
-	
-	
-	
 
-
-
-
-	pros::lcd::set_text(3, "test end"); 
-
-
-	//pros::lcd::set_text(3, "finished");
+	pros::lcd::set_text(3, "finished");
 
 }
 
@@ -351,18 +205,13 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 
-bool climbingmode = false;
-void opcontrol() {
-	
-
-
+bool climbingmode = false; //used for protection-logic
+void opcontrol() { //huge, repeated loop
 	base.allcoast(); //since it's driver-control, let the motors not auto-brake
-	awp.closeboth();
+	awp.closeboth(); //safety function in case of autonomous failure
+	while (true) { //the loop
 
-
-	
-
-	while (true) {
+		//default, tests if GUI is updating
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
 		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
 		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
@@ -371,9 +220,10 @@ void opcontrol() {
 		pros::lcd::set_text(3, "climb test"); //upload tester (change the string to see if the code is new)
 
 
-		
+		//exponentially-tuned turning
 		double x = -1* (pow(1.0471285480509, -1 * master.get_analog(ANALOG_RIGHT_X))) + pow(1.0471285480509, master.get_analog(ANALOG_RIGHT_X)); //exponential function for turning tuning
-		int y = master.get_analog(ANALOG_LEFT_Y); //linear function for forwards/backwards movement
+		//linear function for forwards/backwards movement
+		int y = master.get_analog(ANALOG_LEFT_Y); 
 
 		if (x <= 10 && x >= -10) { //tolerance/deadband for turning
 			x = 0;
@@ -419,7 +269,7 @@ void opcontrol() {
 		}
 
 
-
+		//climbingmode protection frm accidental pressings
 		if (master.get_digital_new_press(DIGITAL_LEFT)) {
 			if (climbingmode == true) {
 				climbingmode = false;
@@ -428,6 +278,7 @@ void opcontrol() {
 			}
 		}
 
+		//new functions 'unlock' if climbing mode is activated
 		if (climbingmode == true) {
 			catapult.requestemergency(true);
 			if (master.get_digital_new_press(DIGITAL_UP)) {
@@ -444,13 +295,10 @@ void opcontrol() {
 			}
 		}
 
-		
 
-		base.printposition();
+		base.printposition(); //using GUI function
 		catapult.taskmanager(); //calling taskmanager on every cycle to handle catapult logic
 
-
-		
 		pros::delay(20); //20 msec before re-running the loop
 	}
 }
